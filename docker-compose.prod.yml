@@ -1,0 +1,260 @@
+# ============================================================
+# Cognova AI (Shadow Brain) — Production Docker Compose Stack
+# Services: App, Postgres, Redis, Nginx, Certbot
+# Domain: brain.mr-imperfect.online
+# ============================================================
+
+version: "3.9"
+
+services:
+  # ------------------------------------------------------------------
+  # PostgreSQL 17 — Primary Database
+  # ------------------------------------------------------------------
+  postgres:
+    image: postgres:17-alpine
+    container_name: sb-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-shadowbrain}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-shadowbrain}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./supabase/migrations:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-shadowbrain} -d ${POSTGRES_DB:-shadowbrain}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - sb-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+
+  # ------------------------------------------------------------------
+  # Redis 7 — BullMQ Queue, Session Cache
+  # ------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: sb-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    networks:
+      - sb-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+
+  # ------------------------------------------------------------------
+  # PostgREST — REST API over Postgres (Supabase-compatible)
+  # ------------------------------------------------------------------
+  postgrest:
+    image: postgrest/postgrest:v12
+    container_name: sb-postgrest
+    restart: unless-stopped
+    environment:
+      PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-shadowbrain}
+      PGRST_DB_SCHEMAS: public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: ${SUPABASE_SERVICE_ROLE_KEY:-${POSTGRES_PASSWORD}}
+      PGRST_JWT_ISS: shadow-brain
+      PGRST_SERVER_PORT: 3001
+      PGRST_DB_POOL: 10
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - sb-network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 64M
+
+  # ------------------------------------------------------------------
+  # Cognova AI App — Next.js Standalone
+  # ------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: sb-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      postgrest:
+        condition: service_started
+    environment:
+      # Core
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+
+      # Database (self-hosted Postgres)
+      DATABASE_URL: postgres://${POSTGRES_USER:-shadowbrain}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-shadowbrain}
+      NEXT_PUBLIC_SUPABASE_URL: http://postgrest:3001
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-${POSTGRES_PASSWORD}}
+
+      # Redis
+      REDIS_URL: redis://redis:6379
+
+      # AI Providers
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      PINECONE_API_KEY: ${PINECONE_API_KEY}
+      PINECONE_INDEX: ${PINECONE_INDEX:-shadow-brain}
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY}
+
+      # Integrations
+      CLOUDFLARE_ACCOUNT_ID: ${CLOUDFLARE_ACCOUNT_ID}
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
+      GMAIL_CLIENT_ID: ${GMAIL_CLIENT_ID}
+      GMAIL_CLIENT_SECRET: ${GMAIL_CLIENT_SECRET}
+      NOTION_TOKEN: ${NOTION_TOKEN}
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL}
+
+      # Feature Phases
+      ENABLE_PHASE1: ${ENABLE_PHASE1:-true}
+      ENABLE_PHASE2: ${ENABLE_PHASE2:-true}
+      ENABLE_PHASE3: ${ENABLE_PHASE3:-false}
+      ENABLE_PHASE4: ${ENABLE_PHASE4:-false}
+      ENABLE_PHASE5: ${ENABLE_PHASE5:-false}
+    volumes:
+      - app_logs:/app/logs
+    networks:
+      - sb-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ------------------------------------------------------------------
+  # Nginx — Reverse Proxy, SSL, Rate Limiting
+  # Domain is passed via env so templates/envsubst works correctly.
+  # ------------------------------------------------------------------
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: sb-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - DOMAIN=${DOMAIN:-brain.mr-imperfect.online}
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/templates:/etc/nginx/templates:ro
+      - certbot_data:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - sb-network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 64M
+
+  # ------------------------------------------------------------------
+  # Certbot — Let's Encrypt SSL (auto-renewal)
+  # ------------------------------------------------------------------
+  certbot:
+    image: certbot/certbot:latest
+    container_name: sb-certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    volumes:
+      - certbot_data:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    networks:
+      - sb-network
+
+  # ------------------------------------------------------------------
+  # Optional: pgAdmin for database management (disable in production if not needed)
+  # ------------------------------------------------------------------
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: sb-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@brain.mr-imperfect.online}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "127.0.0.1:5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - sb-network
+    profiles:
+      - tools
+
+# ------------------------------------------------------------------
+# Networks
+# ------------------------------------------------------------------
+networks:
+  sb-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# ------------------------------------------------------------------
+# Volumes
+# ------------------------------------------------------------------
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  app_logs:
+    driver: local
+  certbot_data:
+    driver: local
+  certbot_www:
+    driver: local
+  pgadmin_data:
+    driver: local

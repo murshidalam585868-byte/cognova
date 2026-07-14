@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #030305;
+  --color-surface: #0a0a0c;
+  --color-surface-elevated: #111114;
+  --color-foreground: #f8fafc;
+  --color-foreground-muted: #94a3b8;
+  --color-accent: #6366f1;
+  --color-accent-violet: #8b5cf6;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    background-color: #030305;
+    color: #f8fafc;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    background-color: #030305;
+    color: #f8fafc;
+    min-height: 100vh;
+  }
+  ::selection {
+    background-color: rgba(99, 102, 241, 0.3);
+    color: #f8fafc;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .glass-strong {
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(32px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .text-gradient {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, #818cf8, #a78bfa);
+  }
+  .animate-gradient-1 {
+    animation: gradientMove 10s ease-in-out infinite alternate;
+  }
+  .animate-gradient-2 {
+    animation: gradientMove 14s ease-in-out infinite alternate-reverse;
+  }
+  .animate-gradient-3 {
+    animation: gradientMove 12s ease-in-out infinite alternate;
+  }
+  .animate-shimmer {
+    animation: shimmer 2s linear infinite;
+  }
+}
+
+@keyframes gradientMove {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(30px, -20px) scale(1.1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

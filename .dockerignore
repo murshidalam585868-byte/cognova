@@ -1,0 +1,74 @@
+# ============================================================
+# Shadow Brain — Docker Build Context Exclusions
+# ============================================================
+
+# Dependencies
+node_modules
+.pnpm-store
+
+# Next.js build output
+.next
+out
+dist
+
+# Testing
+coverage
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+jest.config.*
+playwright.config.*
+tests/
+test-results/
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Development files
+*.log
+logs/
+.cache
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation (keep DEPLOY.md in context, exclude others)
+*.md
+!DEPLOY.md
+!README.md
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+
+# Misc
+scripts/backup.sh
+scripts/deploy.sh
+scripts/validate-env.ts
+nginx/
+backups/
+
+# Workers (build separately if needed)
+workers/**/node_modules
+workers/**/.wrangler

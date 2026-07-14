@@ -1,0 +1,96 @@
+# Cognova AI — Chief of Staff Worker
+# Cloudflare Worker for scheduled intelligence, RSS ingestion, and digest generation
+# Domain: brain.mr-imperfect.online
+
+name = "chief-of-staff"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+account_id = "e07f0241cbc6535ad8dc0c96270fe7dd"
+
+# Custom domain routing — worker serves on brain.mr-imperfect.online
+# AND on the workers.dev subdomain as fallback
+routes = [
+  { pattern = "brain.mr-imperfect.online/chief/*", zone_name = "mr-imperfect.online" },
+  { pattern = "brain.mr-imperfect.online/stats", zone_name = "mr-imperfect.online" },
+  { pattern = "brain.mr-imperfect.online/ingest", zone_name = "mr-imperfect.online" },
+  { pattern = "brain.mr-imperfect.online/digest", zone_name = "mr-imperfect.online" },
+  { pattern = "brain.mr-imperfect.online/event", zone_name = "mr-imperfect.online" },
+]
+
+# Cron triggers:
+# - Every hour: RSS/news ingestion
+# - Daily at 07:00 UTC: Digest generation and delivery
+[[triggers]]
+crons = ["0 * * * *", "0 7 * * *"]
+
+[vars]
+# Domain configuration
+DOMAIN = "brain.mr-imperfect.online"
+ROOT_DOMAIN = "mr-imperfect.online"
+ENVIRONMENT = "production"
+
+# Service endpoints (public-facing)
+APP_URL = "https://brain.mr-imperfect.online"
+API_BASE = "https://brain.mr-imperfect.online/api"
+
+# Supabase URL must be set per-environment via wrangler secret or [env] override
+SUPABASE_URL = ""
+# SUPABASE_SERVICE_KEY is set via: wrangler secret put SUPABASE_SERVICE_KEY
+
+# KV namespace for caching RSS feed state (ETags, last-modified, cursor positions)
+[[kv_namespaces]]
+binding = "FEED_CACHE"
+id = ""
+preview_id = ""
+
+# Durable Object for coordinating singleton digest jobs across regions
+[[durable_objects.bindings]]
+name = "DIGEST_COORDINATOR"
+class_name = "DigestCoordinator"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["DigestCoordinator"]
+
+# ------------------------------------------------------------------------------
+# Environment-specific overrides
+# ------------------------------------------------------------------------------
+
+[env.production]
+name = "chief-of-staff-prod"
+routes = [
+  { pattern = "brain.mr-imperfect.online/chief/*", zone_name = "mr-imperfect.online" },
+  { pattern = "brain.mr-imperfect.online/stats", zone_name = "mr-imperfect.online" },
+  { pattern = "brain.mr-imperfect.online/ingest", zone_name = "mr-imperfect.online" },
+  { pattern = "brain.mr-imperfect.online/digest", zone_name = "mr-imperfect.online" },
+  { pattern = "brain.mr-imperfect.online/event", zone_name = "mr-imperfect.online" },
+]
+
+[env.production.vars]
+DOMAIN = "brain.mr-imperfect.online"
+ROOT_DOMAIN = "mr-imperfect.online"
+ENVIRONMENT = "production"
+APP_URL = "https://brain.mr-imperfect.online"
+API_BASE = "https://brain.mr-imperfect.online/api"
+LOG_LEVEL = "info"
+
+[env.staging]
+name = "chief-of-staff-staging"
+routes = [
+  { pattern = "staging.brain.mr-imperfect.online/*", zone_name = "mr-imperfect.online" },
+]
+
+[env.staging.vars]
+DOMAIN = "staging.brain.mr-imperfect.online"
+ROOT_DOMAIN = "mr-imperfect.online"
+ENVIRONMENT = "staging"
+APP_URL = "https://staging.brain.mr-imperfect.online"
+API_BASE = "https://staging.brain.mr-imperfect.online/api"
+LOG_LEVEL = "debug"
+
+# ------------------------------------------------------------------------------
+# Build configuration
+# ------------------------------------------------------------------------------
+[build]
+command = ""

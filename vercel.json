@@ -1,0 +1,114 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "name": "cognova-ai",
+  "framework": "nextjs",
+  "buildCommand": "next build",
+  "installCommand": "npm ci",
+  "regions": ["iad1"],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0, must-revalidate"
+        },
+        {
+          "key": "Pragma",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
+      "source": "/landing",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, stale-while-revalidate=86400"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/api/robots"
+    },
+    {
+      "source": "/brain",
+      "destination": "/dashboard"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/www.brain.mr-imperfect.online/:path*",
+      "destination": "https://brain.mr-imperfect.online/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/mr-imperfect.online/:path*",
+      "destination": "https://brain.mr-imperfect.online/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/http://brain.mr-imperfect.online/:path*",
+      "destination": "https://brain.mr-imperfect.online/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/login",
+      "destination": "/api/auth/login",
+      "permanent": false
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/health",
+      "schedule": "*/10 * * * *"
+    }
+  ],
+  "github": {
+    "enabled": true,
+    "silent": false
+  },
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "production": true
+    }
+  }
+}
