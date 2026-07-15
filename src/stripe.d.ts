@@ -1,5 +1,6 @@
 declare module 'stripe' {
-  namespace Stripe {
+  export const Stripe: any;
+  export namespace Stripe {
     interface Event {
       id: string;
       type: string;
@@ -47,5 +48,4 @@ declare module 'stripe' {
       metadata?: Record<string, string>;
     }
   }
-  export = Stripe;
 }
