@@ -33,10 +33,13 @@ import type {
 // Lazy Stripe SDK import (optional dependency)
 // ---------------------------------------------------------------------------
 
-let StripeSDK: typeof import('stripe') | null = null;
-let stripeInstance: import('stripe').Stripe | null = null;
+type StripeConstructor = any;
+type StripeInstance = any;
 
-async function getStripe(): Promise<import('stripe').Stripe> {
+let StripeSDK: StripeConstructor | null = null;
+let stripeInstance: StripeInstance | null = null;
+
+async function getStripe(): Promise<StripeInstance> {
   if (stripeInstance) return stripeInstance;
 
   const config = loadConfig();
