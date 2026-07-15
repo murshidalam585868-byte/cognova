@@ -161,7 +161,7 @@ export function markdownToHtml(markdown: string): string {
     .replace(/_(.*)_/gim, '<em>$1</em>')
     .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
     .replace(/^\s*-\s+(.*$)/gim, '<li>$1</li>')
-    .replace(/<li>(.*)<\/li>/gims, '<ul><li>$1</li></ul>') // simplistic grouping
+    .replace(/<li>([\s\S]*?)<\/li>/gim, '<ul><li>$1</li></ul>') // simplistic grouping
     .replace(/\n/gim, '<br>');
 
   // Deduplicate consecutive <br>
