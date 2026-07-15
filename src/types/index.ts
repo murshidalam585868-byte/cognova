@@ -426,3 +426,17 @@ export interface AdminSession {
   revokedReason?: string;
   createdAt: string;
 }
+
+/** Memory summary from conversation consolidation */
+export interface MemorySummary {
+  id: string;
+  userId: string;
+  conversationIds: string[];
+  summary: string;
+  keyFacts: string[];
+  topics: string[];
+  namespace: string;
+  metadata: Record<string, unknown>;
+  createdAt: string;
+  expiresAt?: string;
+}
