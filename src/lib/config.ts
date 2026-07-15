@@ -60,6 +60,12 @@ export const AppConfig = z.object({
   cloudflareAccountId: z.string().optional(),
   cloudflareApiToken: z.string().optional(),
 
+  // Billing
+  stripeSecretKey: z.string().optional(),
+  stripeProPriceId: z.string().optional(),
+  stripeEnterprisePriceId: z.string().optional(),
+  stripeWebhookSecret: z.string().optional(),
+
   // Productivity Integrations
   gmailClientId: z.string().optional(),
   gmailClientSecret: z.string().optional(),
@@ -114,6 +120,11 @@ export function loadConfig(): AppConfig {
 
     cloudflareAccountId: process.env.CLOUDFLARE_ACCOUNT_ID,
     cloudflareApiToken: process.env.CLOUDFLARE_API_TOKEN,
+
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+    stripeProPriceId: process.env.STRIPE_PRO_PRICE_ID,
+    stripeEnterprisePriceId: process.env.STRIPE_ENTERPRISE_PRICE_ID,
+    stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
 
     gmailClientId: process.env.GMAIL_CLIENT_ID,
     gmailClientSecret: process.env.GMAIL_CLIENT_SECRET,
