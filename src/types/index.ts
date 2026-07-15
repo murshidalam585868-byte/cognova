@@ -402,3 +402,27 @@ export interface LearningInsight {
   recommendedActions: string[];
   generatedAt: string;
 }
+
+/** Permission definition for RBAC */
+export interface Permission {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  resource: string;
+  action: string;
+  createdAt: string;
+}
+
+/** Admin session tracking record */
+export interface AdminSession {
+  id: string;
+  userId: string;
+  sessionTokenHash: string;
+  ipAddress: string | null;
+  userAgent: string | null;
+  expiresAt: string;
+  revokedAt?: string;
+  revokedReason?: string;
+  createdAt: string;
+}
