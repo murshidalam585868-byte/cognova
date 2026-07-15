@@ -149,7 +149,7 @@ export default async function LandingPage(): Promise<React.ReactElement> {
               className="flex flex-col gap-4"
             >
               <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
-                <FeatureIcon name={f.icon} />
+                <FeatureIcon name={f.icon ?? 'Sparkles'} />
               </div>
               <h3 className="text-lg font-semibold">{f.title}</h3>
               <p className="text-sm text-foreground-muted leading-relaxed">
