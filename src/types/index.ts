@@ -440,3 +440,34 @@ export interface MemorySummary {
   createdAt: string;
   expiresAt?: string;
 }
+
+/** Preference snapshot captured at a point in time */
+export interface PreferenceSnapshot {
+  id: string;
+  userId: string;
+  preferences: UserPreferences;
+  source: 'explicit' | 'extracted' | 'inferred';
+  confidence: number;
+  createdAt: string;
+}
+
+/** Individual field drift measurement */
+export interface PreferenceDriftField {
+  field: keyof UserPreferences;
+  previousValue: unknown;
+  currentValue: unknown;
+  confidenceDelta: number;
+  driftScore: number;
+}
+
+/** Report summarizing detected preference drift */
+export interface PreferenceDriftReport {
+  id: string;
+  userId: string;
+  snapshotIds: string[];
+  driftedFields: PreferenceDriftField[];
+  summary: string;
+  severity: 'low' | 'medium' | 'high';
+  recommendedAction: string;
+  createdAt: string;
+}
