@@ -224,7 +224,7 @@ export class SIEMEngine {
 
       const events = (data ?? []) as SecurityEvent[];
       if (events.length >= rule.countThreshold) {
-        const alert = await this.createAlert(rule.id, events);
+        const alert = await this.createAlert(rule.id ?? 'unknown', events);
         alerts.push(alert);
       }
     }
