@@ -1,3 +1,4 @@
+import React from 'react';
 import { z } from 'zod';
 import type { Metadata } from 'next';
 import { brand } from '@/lib/config';
@@ -96,7 +97,7 @@ const pricing = PricingTierSchema.array().parse([
   },
 ]);
 
-export default async function LandingPage(): Promise<JSX.Element> {
+export default async function LandingPage(): Promise<React.ReactElement> {
   return (
     <div className="relative min-h-screen bg-background overflow-hidden text-foreground">
       <AnimatedGradient />

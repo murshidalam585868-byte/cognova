@@ -71,9 +71,11 @@ export interface Digest {
   id: string;
   userId: string;
   type: 'daily' | 'weekly' | 'event';
+  title: string;
   content: string;
   sources: string[];
   sentAt: string;
+  createdAt: string;
 }
 
 export interface Entity {
@@ -250,4 +252,153 @@ export interface BillingDashboardData {
   invoices: Invoice[];
   usage: UsageAggregate[];
   tiers: SubscriptionTier[];
+}
+
+/** Admin dashboard stats payload */
+export interface AdminDashboardStats {
+  totalUsers: number;
+  totalConversations: number;
+  totalMessages: number;
+  totalMemories: number;
+  activeUsers24h: number;
+  failedJobs: number;
+  openAlerts: number;
+  systemStatus: 'healthy' | 'degraded' | 'critical';
+}
+
+/** Admin user view with role */
+export type UserRole = 'user' | 'admin' | 'superadmin';
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  preferences: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+  isActive: boolean;
+}
+
+/** System health snapshot for monitoring */
+export interface SystemHealthSnapshot {
+  id: string;
+  cpuPercent?: number;
+  memoryPercent?: number;
+  diskPercent?: number;
+  activeConnections?: number;
+  queueDepth?: number;
+  apiLatencyMs?: number;
+  errorRate5m?: number;
+  openAlerts?: number;
+  status: 'healthy' | 'degraded' | 'critical';
+  details: Record<string, unknown>;
+  recordedAt: string;
+}
+
+/** Tool configuration for admin panel */
+export interface ToolAdminConfig {
+  id: string;
+  toolName: string;
+  isEnabled: boolean;
+  rateLimitPerMinute: number;
+  globalTimeoutMs: number;
+  config: Record<string, unknown>;
+  updatedBy?: string;
+  updatedAt: string;
+}
+
+/** Audit log entry for security & compliance tracking */
+export interface AuditLog {
+  id: string;
+  actorId?: string;
+  actorEmail?: string;
+  actorRole?: string;
+  action: string;
+  resourceType: string;
+  resourceId?: string;
+  payload?: Record<string, unknown>;
+  result: 'success' | 'failure' | 'blocked';
+  errorMessage?: string;
+  ipAddress?: string;
+  userAgent?: string;
+  sessionId?: string;
+  createdAt: string;
+}
+
+// ---------------------------------------------------------------------------
+// Learning Engine Types
+// ---------------------------------------------------------------------------
+
+/** User feedback entry for a message */
+export interface FeedbackEntry {
+  id: string;
+  userId: string;
+  messageId: string;
+  conversationId: string;
+  feedback: 'positive' | 'negative' | 'neutral';
+  rating?: number;
+  comment?: string;
+  tags: string[];
+  metadata: Record<string, unknown>;
+  createdAt: string;
+}
+
+/** Aggregated feedback statistics */
+export interface FeedbackStats {
+  totalFeedback: number;
+  positiveCount: number;
+  negativeCount: number;
+  neutralCount: number;
+  averageRating: number;
+  positiveRate: number;
+  topTags: string[];
+  trendDirection: 'improving' | 'declining' | 'stable' | 'insufficient_data';
+  periodStart: string;
+  periodEnd: string;
+}
+
+/** A skill discovered by the learning engine */
+export interface DiscoveredSkill {
+  id: string;
+  userId: string;
+  name: string;
+  description: string;
+  evidence: string[];
+  category: string;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  status: 'discovered' | 'evaluated' | 'implemented' | 'rejected';
+  implementationNotes?: string;
+  confidence: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Composite learning insight for a user */
+/** Uploaded document for knowledge base */
+export interface Document {
+  id: string;
+  userId: string;
+  fileName: string;
+  mimeType: string;
+  sizeBytes: number;
+  textContent: string;
+  metadata: Record<string, unknown>;
+  status: 'pending' | 'processing' | 'running' | 'completed' | 'failed';
+  errorMessage?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LearningInsight {
+  userId: string;
+  period: 'daily' | 'weekly' | 'monthly';
+  totalConversations: number;
+  totalMessages: number;
+  feedbackStats: FeedbackStats;
+  discoveredSkills: DiscoveredSkill[];
+  topTopics: string[];
+  preferenceChanges: string[];
+  recommendedActions: string[];
+  generatedAt: string;
 }

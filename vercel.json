@@ -4,7 +4,7 @@
   "name": "cognova-ai",
   "framework": "nextjs",
   "buildCommand": "next build",
-  "installCommand": "npm ci",
+  "installCommand": "npm install --legacy-peer-deps",
   "regions": ["iad1"],
   "headers": [
     {
@@ -85,7 +85,7 @@
       "permanent": true
     },
     {
-      "source": "/http://brain.mr-imperfect.online/:path*",
+      "source": "/brain.mr-imperfect.online/:path*",
       "destination": "https://brain.mr-imperfect.online/:path*",
       "permanent": true
     },
@@ -98,7 +98,7 @@
   "crons": [
     {
       "path": "/api/health",
-      "schedule": "*/10 * * * *"
+      "schedule": "0 0 * * *"
     }
   ],
   "github": {

@@ -102,7 +102,7 @@ export default async function DashboardPage() {
   const totalNews = data.newsItems.length;
   const totalDigests = data.digests.length;
   const activeSources = data.sources.filter((s) => s.is_active).length;
-  const failedJobs = queueStats.failed || 0;
+  const failedJobs = queueStats.find((s) => s.state === 'failed')?.count ?? 0;
 
   const COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 

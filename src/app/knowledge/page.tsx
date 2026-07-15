@@ -222,6 +222,11 @@ function DocumentRow({ doc }: { doc: Document & { chunkCount: number } }) {
         <RefreshCw className="w-4 h-4 animate-spin" /> Processing
       </span>
     ),
+    running: (
+      <span className="inline-flex items-center gap-1 text-sky-600 dark:text-sky-400">
+        <RefreshCw className="w-4 h-4 animate-spin" /> Running
+      </span>
+    ),
     completed: (
       <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
         <CheckCircle2 className="w-4 h-4" /> Completed

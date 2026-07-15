@@ -101,7 +101,9 @@ export async function POST(req: NextRequest): Promise<Response> {
 
     if (clientMessages.length === 1 && clientMessages[0].role === 'user') {
       const dbMessages = await getMessagesByConversation(conversationId);
-      const history = dbMessages.map((m) => toLangChainMessage({ role: m.role, content: m.content }));
+      const history = dbMessages
+        .filter((m) => m.role !== 'tool')
+        .map((m) => toLangChainMessage({ role: m.role as 'user' | 'assistant' | 'system', content: m.content }));
       allMessages = [...history, ...allMessages];
     }
 
@@ -152,7 +154,7 @@ export async function POST(req: NextRequest): Promise<Response> {
         let fullResponse = '';
 
         try {
-          const eventStream = await graph.streamEvents(initialState, {
+          const eventStream = await graph.streamEvents(initialState as any, {
             version: 'v2' as const,
             metadata: { conversationId, userId },
           });

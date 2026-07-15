@@ -21,7 +21,6 @@
     "@langchain/community": "^0.3.0",
     "@langchain/pinecone": "^0.1.0",
     "langchain": "^0.3.0",
-    "langgraph": "^0.2.0",
     "@langchain/langgraph": "^0.2.0",
     "@pinecone-database/pinecone": "^5.0.0",
     "@supabase/supabase-js": "^2.49.0",

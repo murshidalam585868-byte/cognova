@@ -61,20 +61,20 @@ const SIEMIngestSchema = z.object({
   severity: z.enum(['low', 'medium', 'high', 'critical']),
   source: z.string().min(1),
   description: z.string().min(1),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.unknown()).default({}),
 });
 
 const KGEntitySchema = z.object({
   name: z.string().min(1),
   type: z.string().min(1),
-  properties: z.record(z.unknown()).optional(),
+  properties: z.record(z.unknown()).default({}),
 });
 
 const KGRelationSchema = z.object({
   sourceId: z.string().uuid(),
   targetId: z.string().uuid(),
   type: z.string().min(1),
-  properties: z.record(z.unknown()).optional(),
+  properties: z.record(z.unknown()).default({}),
 });
 
 // ------------------------------------------------------------------

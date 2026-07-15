@@ -219,7 +219,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 // For simplicity, this module exports a standalone handler you can mount at
 // /api/billing/webhook (or any path) with the bodyParser config disabled.
 
-export async function handleWebhook(req: NextRequest): Promise<NextResponse> {
+async function handleWebhook(req: NextRequest): Promise<NextResponse> {
   try {
     const signature = req.headers.get('stripe-signature') ?? '';
     const payload = await req.text();
