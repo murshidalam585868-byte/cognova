@@ -68,7 +68,7 @@ function getInternalSupabaseClient(): SupabaseClient {
  * @returns The result of the pipeline run.
  */
 export async function runDailyPipeline(
-  config: DailyPipelineConfig = {}
+  config: z.input<typeof DailyPipelineConfigSchema> = {}
 ): Promise<DailyPipelineResult[]> {
   const opts = DailyPipelineConfigSchema.parse(config);
   const sb = getInternalSupabaseClient();
