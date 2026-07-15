@@ -270,7 +270,7 @@ const workflow = new StateGraph<GraphState>({
     },
     preferences: {
       value: (x: UserPreferences, y: UserPreferences) => y ?? x,
-      default: () => ({
+      default: (): UserPreferences => ({
         tone: 'detailed',
         verbosity: 'standard',
         responseStyle: 'collaborative',
