@@ -8,8 +8,6 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { parseJwt, getUserIdFromToken } from '@/lib/admin/auth';
-import { logger } from '@/lib/logger';
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -41,6 +39,9 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   // --- Admin Routes (pages + API) ---
   if (pathname.startsWith(ADMIN_PATH_PREFIX) || pathname.startsWith(API_ADMIN_PATH_PREFIX)) {
     if (!token) {
+      console.warn('Admin access denied: no session token', { pathname });
+      return handleUnauthorized(request, pathname.startsWith(API_ADMIN_PATH_PREFIX));
+    }
       logger.warn('Admin access denied: no session token', { pathname, ip: request.ip });
       return handleUnauthorized(request, pathname.startsWith(API_ADMIN_PATH_PREFIX));
     }
@@ -51,6 +52,9 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
     // Admin routes require at least 'admin' role
     if (role !== 'admin' && role !== 'superadmin') {
+      console.warn('Admin access denied: insufficient role', { pathname, role });
+      return handleForbidden(request, pathname.startsWith(API_ADMIN_PATH_PREFIX));
+    }
       logger.warn('Admin access denied: insufficient role', { pathname, role, ip: request.ip });
       return handleForbidden(request, pathname.startsWith(API_ADMIN_PATH_PREFIX));
     }
@@ -78,6 +82,32 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 // ---------------------------------------------------------------------------
 
 function extractRoleFromJwt(payload: Record<string, unknown> | null): string | null {
+  if (!payload) return null;
+  // Check custom claim 'user_role' if set by Supabase hook
+  const role = payload.user_role;
+  if (typeof role === 'string') return role;
+  // Fallback: check app_metadata
+  const appMeta = payload.app_metadata as Record<string, unknown> | undefined;
+  if (appMeta && typeof appMeta.role === 'string') return appMeta.role;
+  return null;
+}
+
+function parseJwt(token: string): Record<string, unknown> | null {
+  try {
+    const base64Payload = token.split('.')[1];
+    if (!base64Payload) return null;
+    const payload = Buffer.from(base64Payload, 'base64').toString('utf-8');
+    return JSON.parse(payload) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+function getUserIdFromToken(token: string): string | null {
+  const payload = parseJwt(token);
+  if (!payload || typeof payload.sub !== 'string') return null;
+  return payload.sub;
+}
   if (!payload) return null;
   // Check custom claim 'user_role' if set by Supabase hook
   const role = payload.user_role;
