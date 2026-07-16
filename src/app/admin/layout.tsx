@@ -21,6 +21,7 @@ import {
   X,
 } from 'lucide-react';
 import { requireAdmin } from '@/lib/admin/auth';
+import { getAdminFromCookie } from '@/lib/admin/auth-cookie';
 import { redirect } from 'next/navigation';
 
 export const metadata = {
@@ -42,10 +43,10 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Server-side auth guard
-  const user = await requireAdmin();
+  // Server-side auth guard — try Supabase first, then fall back to cookie
+  const user = (await requireAdmin()) ?? (await getAdminFromCookie());
   if (!user) {
-    redirect('/');
+    redirect('/admin-login');
   }
 
   return (

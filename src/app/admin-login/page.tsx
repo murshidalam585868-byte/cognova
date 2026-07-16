@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 /**
- * Temporary Admin Login Page
- * ==========================
+ * Admin Login Page
+ * ================
  * Provides a simple login form for accessing the admin panel
  * while the full Supabase Auth integration is being configured.
  *

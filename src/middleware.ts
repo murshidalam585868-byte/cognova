@@ -14,12 +14,12 @@ import { NextRequest, NextResponse } from 'next/server';
 // ---------------------------------------------------------------------------
 
 const AUTH_COOKIE_NAME = 'sb-session';
-const LOGIN_PATH = '/';
+const LOGIN_PATH = '/admin-login';
 const ADMIN_PATH_PREFIX = '/admin';
 const API_ADMIN_PATH_PREFIX = '/api/admin';
 
 // Public paths that do not require authentication
-const PUBLIC_PATHS = ['/', '/login', '/signup', '/api/auth', '/_next', '/favicon.ico', '/admin/login'];
+const PUBLIC_PATHS = ['/', '/login', '/signup', '/api/auth', '/_next', '/favicon.ico', '/admin-login'];
 
 // ---------------------------------------------------------------------------
 // Middleware Handler
@@ -122,7 +122,7 @@ function handleForbidden(request: NextRequest, isApi: boolean): NextResponse {
       { status: 403 }
     );
   }
-  return NextResponse.redirect(new URL('/', request.url));
+  return NextResponse.redirect(new URL('/admin-login', request.url));
 }
 
 // ---------------------------------------------------------------------------
