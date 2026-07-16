@@ -471,3 +471,32 @@ export interface PreferenceDriftReport {
   recommendedAction: string;
   createdAt: string;
 }
+
+/** Individual training example for fine-tuning datasets */
+export interface TrainingExample {
+  id: string;
+  userId: string;
+  conversationId: string;
+  messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
+  feedbackId?: string;
+  qualityScore: number;
+  tags: string[];
+  metadata: Record<string, unknown>;
+  createdAt: string;
+}
+
+/** Exported training dataset metadata */
+export interface TrainingDataset {
+  id: string;
+  userId: string;
+  name: string;
+  description?: string;
+  exampleIds: string[];
+  format: 'openai' | 'anthropic' | 'generic';
+  qualityThreshold: number;
+  tagFilter?: string[];
+  createdAt: string;
+  exportedAt?: string;
+  fileUrl?: string;
+}
+
