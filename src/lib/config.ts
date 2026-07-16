@@ -31,12 +31,6 @@ export const BrandConfig = z.object({
   domain: z.string().default('brain.mr-imperfect.online'),
   supportEmail: z.string().default('support@mr-imperfect.online'),
 });
-  productName: z.string().default('Cognova'),
-  tagline: z.string().default('AI Business Partner'),
-  description: z.string().default('Elite AI CEO Office System'),
-  domain: z.string().default('brain.mr-imperfect.online'),
-  supportEmail: z.string().default('support@mr-imperfect.online'),
-});
 export type BrandConfig = z.infer<typeof BrandConfig>;
 
 export const AppConfig = z.object({

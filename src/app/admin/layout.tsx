@@ -28,9 +28,6 @@ export const metadata = {
   title: 'Hazard Brain — Admin Panel',
   description: 'System administration and monitoring',
 };
-  title: 'Shadow Brain — Admin Panel',
-  description: 'System administration and monitoring',
-};
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
