@@ -1,6 +1,6 @@
 /**
  * src/app/billing/page.tsx
- * Billing Dashboard for Shadow Brain.
+ * Billing Dashboard for Hazard Brain.
  *
  * Displays:
  * - Current subscription plan and status
@@ -348,6 +348,9 @@ export default async function BillingPage() {
                         Current Plan
                       </button>
                     ) : tier.id === 'enterprise' ? (
+                      <a
+                        href="mailto:sales@brain.mr-imperfect.online"
+                        className="block w-full text-center py-2.5 rounded-lg font-medium bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 transition-colors"
                       <a
                         href="mailto:sales@shadow-brain.dev"
                         className="block w-full text-center py-2.5 rounded-lg font-medium bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 transition-colors"

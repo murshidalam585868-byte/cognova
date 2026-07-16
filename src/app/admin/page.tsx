@@ -24,7 +24,7 @@ import { getDashboardStats } from '@/lib/admin/actions';
 import type { AdminDashboardStats } from '@/types';
 
 export const metadata = {
-  title: 'Admin Dashboard — Shadow Brain',
+  title: 'Admin Dashboard — Hazard Brain',
 };
 
 // ---------------------------------------------------------------------------

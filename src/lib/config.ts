@@ -149,7 +149,6 @@ export const domain = loadDomainConfig();
 
 export const brand = BrandConfig.parse({
   productName: process.env.NEXT_PUBLIC_PRODUCT_NAME || 'Hazard Brain',
-  productName: process.env.NEXT_PUBLIC_PRODUCT_NAME || 'Cognova',
   tagline: process.env.NEXT_PUBLIC_TAGLINE || 'AI Business Partner',
   description: process.env.NEXT_PUBLIC_DESCRIPTION || 'Elite AI CEO Office System',
   domain: process.env.DOMAIN || 'brain.mr-imperfect.online',

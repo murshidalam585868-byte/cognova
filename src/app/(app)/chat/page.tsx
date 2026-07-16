@@ -2,7 +2,7 @@
 
 /**
  * src/app/(app)/chat/page.tsx
- * Cognova Chat UI — Premium Experience
+ * Hazard Brain Chat UI — Premium Experience
  */
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
