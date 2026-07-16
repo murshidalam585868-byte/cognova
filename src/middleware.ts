@@ -42,9 +42,6 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
       console.warn('Admin access denied: no session token', { pathname });
       return handleUnauthorized(request, pathname.startsWith(API_ADMIN_PATH_PREFIX));
     }
-      logger.warn('Admin access denied: no session token', { pathname, ip: request.ip });
-      return handleUnauthorized(request, pathname.startsWith(API_ADMIN_PATH_PREFIX));
-    }
 
     // Fast-path JWT role extraction (avoids DB hit in middleware for superadmins)
     const jwtPayload = parseJwt(token);
@@ -53,9 +50,6 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     // Admin routes require at least 'admin' role
     if (role !== 'admin' && role !== 'superadmin') {
       console.warn('Admin access denied: insufficient role', { pathname, role });
-      return handleForbidden(request, pathname.startsWith(API_ADMIN_PATH_PREFIX));
-    }
-      logger.warn('Admin access denied: insufficient role', { pathname, role, ip: request.ip });
       return handleForbidden(request, pathname.startsWith(API_ADMIN_PATH_PREFIX));
     }
 
@@ -107,15 +101,6 @@ function getUserIdFromToken(token: string): string | null {
   const payload = parseJwt(token);
   if (!payload || typeof payload.sub !== 'string') return null;
   return payload.sub;
-}
-  if (!payload) return null;
-  // Check custom claim 'user_role' if set by Supabase hook
-  const role = payload.user_role;
-  if (typeof role === 'string') return role;
-  // Fallback: check app_metadata
-  const appMeta = payload.app_metadata as Record<string, unknown> | undefined;
-  if (appMeta && typeof appMeta.role === 'string') return appMeta.role;
-  return null;
 }
 
 function handleUnauthorized(request: NextRequest, isApi: boolean): NextResponse {
