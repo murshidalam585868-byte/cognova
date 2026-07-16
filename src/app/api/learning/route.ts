@@ -503,7 +503,9 @@ async function buildLearningInsight(
 
   // Preference changes from latest drift report
   const driftReport = await getLatestDriftReport(userId);
-  const preferenceChanges = driftReport?.driftedFields ?? [];
+  const preferenceChanges: string[] = (driftReport?.driftedFields ?? []).map(
+    (f) => `${String(f.field)}: ${JSON.stringify(f.previousValue)} → ${JSON.stringify(f.currentValue)} (drift: ${f.driftScore.toFixed(2)})`
+  );
 
   // Recommended actions
   const recommendedActions: string[] = [];
