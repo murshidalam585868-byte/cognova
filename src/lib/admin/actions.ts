@@ -344,9 +344,6 @@ export type ConversationListInput = z.infer<typeof ConversationListSchema>;
 export async function listConversations(input: ConversationListInput): Promise<{
   conversations: Conversation[];
   total: number;
-}>
-  conversations: Conversation[];
-  total: number;
 }> {
   const admin = await requireAdmin();
   if (!admin) throw new Error('Unauthorized');

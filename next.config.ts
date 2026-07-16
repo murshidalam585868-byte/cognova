@@ -5,9 +5,7 @@ const nextConfig: NextConfig = {
   distDir: '.next',
   poweredByHeader: false,
   compress: true,
-  experimental: {
-    serverComponentsExternalPackages: ['bullmq', 'ioredis', 'winston'],
-  },
+  serverExternalPackages: ['bullmq', 'ioredis', 'winston'],
   images: {
     unoptimized: true,
     remotePatterns: [
