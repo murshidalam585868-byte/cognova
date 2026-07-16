@@ -19,7 +19,7 @@ const ADMIN_PATH_PREFIX = '/admin';
 const API_ADMIN_PATH_PREFIX = '/api/admin';
 
 // Public paths that do not require authentication
-const PUBLIC_PATHS = ['/', '/login', '/signup', '/api/auth', '/_next', '/favicon.ico'];
+const PUBLIC_PATHS = ['/', '/login', '/signup', '/api/auth', '/_next', '/favicon.ico', '/admin/login'];
 
 // ---------------------------------------------------------------------------
 // Middleware Handler
