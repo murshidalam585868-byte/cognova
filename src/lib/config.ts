@@ -148,6 +148,12 @@ export function loadConfig(): AppConfig {
 export const domain = loadDomainConfig();
 
 export const brand = BrandConfig.parse({
+  productName: 'Hazard Brain',
+  tagline: process.env.NEXT_PUBLIC_TAGLINE || 'AI Business Partner',
+  description: process.env.NEXT_PUBLIC_DESCRIPTION || 'Elite AI CEO Office System',
+  domain: process.env.DOMAIN || 'brain.mr-imperfect.online',
+  supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'support@mr-imperfect.online',
+});
   productName: process.env.NEXT_PUBLIC_PRODUCT_NAME || 'Hazard Brain',
   tagline: process.env.NEXT_PUBLIC_TAGLINE || 'AI Business Partner',
   description: process.env.NEXT_PUBLIC_DESCRIPTION || 'Elite AI CEO Office System',
