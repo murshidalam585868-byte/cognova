@@ -106,7 +106,7 @@ export default async function LandingPage(): Promise<React.ReactElement> {
       <section className="relative z-10 flex flex-col items-center justify-center px-6 pt-32 pb-20 text-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm font-medium text-foreground-muted backdrop-blur-md mb-8">
           <Sparkles size={14} />
-          Introducing {brand.productName} v2.0
+          Hazard Brain — Elite AI CEO Office
         </div>
         <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gradient max-w-4xl">
           Your AI CEO Office
