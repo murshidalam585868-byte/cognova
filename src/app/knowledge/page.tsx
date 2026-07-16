@@ -23,6 +23,8 @@ import type { Document } from '@/types';
 import { DocumentUploadForm } from './DocumentUploadForm';
 import { DocumentActions } from './DocumentActions';
 
+export const dynamic = 'force-dynamic';
+
 // ---------------------------------------------------------------------------
 // Server-side data fetching
 // ---------------------------------------------------------------------------
@@ -32,37 +34,41 @@ async function fetchDocuments(): Promise<(Document & { chunkCount: number })[]> 
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !key) {
-    throw new Error('Missing Supabase environment variables');
+    return [];
   }
 
-  const sb = createClient(url, key, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
+  try {
+    const sb = createClient(url, key, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
 
-  const { data, error } = await sb
-    .from('documents')
-    .select('*, chunks(count)')
-    .order('created_at', { ascending: false })
-    .limit(200);
+    const { data, error } = await sb
+      .from('documents')
+      .select('*, chunks(count)')
+      .order('created_at', { ascending: false })
+      .limit(200);
 
-  if (error) {
-    throw new Error(`Failed to fetch documents: ${error.message}`);
+    if (error) {
+      return [];
+    }
+
+    return (data || []).map((row) => ({
+      id: String(row.id),
+      userId: String(row.user_id),
+      fileName: String(row.file_name),
+      mimeType: String(row.mime_type),
+      sizeBytes: Number(row.size_bytes),
+      textContent: String(row.text_content || ''),
+      metadata: (row.metadata as Record<string, unknown>) || {},
+      status: row.status as Document['status'],
+      errorMessage: row.error_message ? String(row.error_message) : undefined,
+      createdAt: String(row.created_at),
+      updatedAt: String(row.updated_at),
+      chunkCount: Number(row.chunks?.count || 0),
+    }));
+  } catch {
+    return [];
   }
-
-  return (data || []).map((row) => ({
-    id: String(row.id),
-    userId: String(row.user_id),
-    fileName: String(row.file_name),
-    mimeType: String(row.mime_type),
-    sizeBytes: Number(row.size_bytes),
-    textContent: String(row.text_content || ''),
-    metadata: (row.metadata as Record<string, unknown>) || {},
-    status: row.status as Document['status'],
-    errorMessage: row.error_message ? String(row.error_message) : undefined,
-    createdAt: String(row.created_at),
-    updatedAt: String(row.updated_at),
-    chunkCount: Number(row.chunks?.count || 0),
-  }));
 }
 
 // ---------------------------------------------------------------------------
