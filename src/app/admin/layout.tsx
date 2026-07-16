@@ -25,6 +25,9 @@ import { getAdminFromCookie } from '@/lib/admin/auth-cookie';
 import { redirect } from 'next/navigation';
 
 export const metadata = {
+  title: 'Hazard Brain — Admin Panel',
+  description: 'System administration and monitoring',
+};
   title: 'Shadow Brain — Admin Panel',
   description: 'System administration and monitoring',
 };
@@ -58,7 +61,7 @@ export default async function AdminLayout({
           <Shield className="w-6 h-6 text-sky-600" />
           <div>
             <h1 className="text-sm font-bold text-gray-900 dark:text-white tracking-tight">
-              Shadow Brain
+              Hazard Brain
             </h1>
             <p className="text-xs text-gray-500 dark:text-gray-400">Admin Panel</p>
           </div>

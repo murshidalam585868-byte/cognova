@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "name": "cognova-ai",
+  "name": "hazard-brain",
   "framework": "nextjs",
   "buildCommand": "next build",
   "installCommand": "npm install --legacy-peer-deps",

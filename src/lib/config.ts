@@ -25,6 +25,12 @@ export const PhaseConfig = z.object({
 export type PhaseConfig = z.infer<typeof PhaseConfig>;
 
 export const BrandConfig = z.object({
+  productName: z.string().default('Hazard Brain'),
+  tagline: z.string().default('AI Business Partner'),
+  description: z.string().default('Elite AI CEO Office System'),
+  domain: z.string().default('brain.mr-imperfect.online'),
+  supportEmail: z.string().default('support@mr-imperfect.online'),
+});
   productName: z.string().default('Cognova'),
   tagline: z.string().default('AI Business Partner'),
   description: z.string().default('Elite AI CEO Office System'),
@@ -148,6 +154,7 @@ export function loadConfig(): AppConfig {
 export const domain = loadDomainConfig();
 
 export const brand = BrandConfig.parse({
+  productName: process.env.NEXT_PUBLIC_PRODUCT_NAME || 'Hazard Brain',
   productName: process.env.NEXT_PUBLIC_PRODUCT_NAME || 'Cognova',
   tagline: process.env.NEXT_PUBLIC_TAGLINE || 'AI Business Partner',
   description: process.env.NEXT_PUBLIC_DESCRIPTION || 'Elite AI CEO Office System',
