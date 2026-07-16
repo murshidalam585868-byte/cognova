@@ -13,7 +13,7 @@
     "worker:deploy": "wrangler deploy"
   },
   "dependencies": {
-    "next": "15.1.6",
+    "next": "15.1.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "@langchain/core": "^0.3.0",
@@ -46,7 +46,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "^9.0.0",
-    "eslint-config-next": "15.1.6",
+    "eslint-config-next": "15.1.9",
     "wrangler": "^3.107.0",
     "@cloudflare/workers-types": "^4.20250129.0"
   }
